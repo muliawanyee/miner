@@ -75,7 +75,7 @@
     border: 2px solid rgba(100, 100, 150, 0.15);
   }
   .ring-3 {
-    width: 240px; height: 240px;
+    width: 260px; height: 260px; /* Diperbesar dari 240px menjadi 260px */
     background: radial-gradient(circle, transparent 42%, #101025 42%, #101025 48%, transparent 48%);
     border: 2px solid rgba(100, 100, 150, 0.1);
   }
@@ -152,11 +152,12 @@
   @keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes spin-ccw { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
-  .ring.running.spin-1 { animation: spin-cw 10s linear infinite; }
-  .ring.running.spin-2 { animation: spin-ccw 14s linear infinite; }
-  .ring.running.spin-3 { animation: spin-cw 8s linear infinite; }
-  .ring.running.spin-4 { animation: spin-ccw 12s linear infinite; }
-  .ring.running.spin-5 { animation: spin-cw 6s linear infinite; }
+  /* Kecepatan dikurangi 50% (Durasi diperpanjang 2x lipat) */
+  .ring.running.spin-1 { animation: spin-cw 20s linear infinite; }
+  .ring.running.spin-2 { animation: spin-ccw 28s linear infinite; }
+  .ring.running.spin-3 { animation: spin-cw 16s linear infinite; }
+  .ring.running.spin-4 { animation: spin-ccw 24s linear infinite; }
+  .ring.running.spin-5 { animation: spin-cw 12s linear infinite; }
 
   .center {
     position: absolute;
@@ -250,15 +251,25 @@
 
 <script>
 let isRunning = false;
-let keyInterval = null;
 let clickInterval = null;
 let audioCtx = null;
+let animationFrameId = null;
+let startTime = 0;
 
 const CHARS = '0123456789ABCDEFGHIJKLMN'.split('');
 const CHARS_PER_RING = 24;
 const RING_OFFSETS = [0, 6, 12, 18, 3];
 const CLICK_INTERVAL_MS = 60000;
 const TICKS_PER_RING = 60;
+
+// Kecepatan rotasi berdasarkan durasi CSS baru (20s, 28s, 16s, 24s, 12s)
+const RING_SPEEDS = [
+  360 / 20000,   // Ring 0 (CW)
+  -360 / 28000,  // Ring 1 (CCW)
+  360 / 16000,   // Ring 2 (CW)
+  -360 / 24000,  // Ring 3 (CCW)
+  360 / 12000    // Ring 4 (CW)
+];
 
 // ==================== AUDIO ENGINE ====================
 function initAudio() {
@@ -272,7 +283,6 @@ function initAudio() {
 
 function playMechanicalClick() {
   if (!audioCtx) return;
-  
   const now = audioCtx.currentTime;
   
   const clickOsc = audioCtx.createOscillator();
@@ -373,8 +383,9 @@ function stopClickLoop() {
 
 // ==================== RING INITIALIZATION ====================
 function initRings() {
-  const radii = [180, 142, 104, 85, 66];
-  const tickRadii = [195, 155, 115, 95, 75];
+  // radii dan tickRadii disesuaikan untuk menyeimbangkan ukuran .ring-3 yang baru (260px)
+  const radii = [180, 142, 112, 85, 66];
+  const tickRadii = [195, 155, 125, 95, 75];
   
   for (let r = 0; r < 5; r++) {
     const ring = document.getElementById(`ring-${r}`);
@@ -414,40 +425,33 @@ function initRings() {
   }
 }
 
-function updateHighlights() {
+// Menggunakan requestAnimationFrame agar performa ringan dan mulus
+function updateHighlights(timestamp) {
   if (!isRunning) return;
-  
+  if (!startTime) startTime = timestamp;
+  const elapsed = timestamp - startTime;
+
   const rings = document.querySelectorAll('.ring');
   
-  rings.forEach((ring) => {
-    ring.querySelectorAll('.ring-char.highlight').forEach(el => el.classList.remove('highlight'));
+  rings.forEach((ring, r) => {
+    const oldHighlight = ring.querySelector('.ring-char.highlight');
+    if (oldHighlight) oldHighlight.classList.remove('highlight');
     
-    const computedStyle = window.getComputedStyle(ring);
-    const matrix = computedStyle.transform;
-    
-    let currentAngle = 0;
-    if (matrix && matrix !== 'none') {
-      const match = matrix.match(/matrix(?:3d)?\(([^)]+)\)/);
-      if (match) {
-        const parts = match[1].split(',').map(Number);
-        currentAngle = Math.atan2(parts[1], parts[0]) * (180 / Math.PI);
-      }
-    }
-    
-    currentAngle = ((currentAngle % 360) + 360) % 360;
+    let currentAngle = (elapsed * RING_SPEEDS[r]) % 360;
+    if (currentAngle < 0) currentAngle += 360;
     
     const anglePerChar = 360 / CHARS_PER_RING;
     let rawIndex = -currentAngle / anglePerChar;
     let highlightIndex = Math.round(rawIndex) % CHARS_PER_RING;
-    if (highlightIndex < 0) {
-      highlightIndex += CHARS_PER_RING;
-    }
+    if (highlightIndex < 0) highlightIndex += CHARS_PER_RING;
     
     const chars = ring.querySelectorAll('.ring-char');
     if (chars[highlightIndex]) {
       chars[highlightIndex].classList.add('highlight');
     }
   });
+
+  animationFrameId = requestAnimationFrame(updateHighlights);
 }
 
 function toggleValidator() {
@@ -465,7 +469,8 @@ function toggleValidator() {
     guideLine.classList.add('active');
     rings.forEach(ring => ring.classList.add('running'));
 
-    keyInterval = setInterval(updateHighlights, 100);
+    startTime = 0; // Reset waktu agar sinkron
+    animationFrameId = requestAnimationFrame(updateHighlights);
     startClickLoop();
     
     setTimeout(() => {
@@ -485,9 +490,9 @@ function toggleValidator() {
       ring.querySelectorAll('.ring-char.highlight').forEach(el => el.classList.remove('highlight'));
     });
 
-    if (keyInterval) {
-      clearInterval(keyInterval);
-      keyInterval = null;
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
     }
     
     stopClickLoop();
