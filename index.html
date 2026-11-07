@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BossX Validator Access Dial</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    color: #f0a500;
+  }
+
+  .vault-container {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center center;
+  }
+
+  @media (max-width: 450px) { .vault-container { transform: scale(0.85); } }
+  @media (max-width: 360px) { .vault-container { transform: scale(0.75); } }
+
+  .pointer {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 24px solid #f0a500;
+    z-index: 100;
+    filter: drop-shadow(0 0 8px #f0a500);
+    transition: all 0.5s ease;
+  }
+
+  .pointer.active {
+    border-top-color: #00ff88;
+    filter: drop-shadow(0 0 12px #00ff88);
+  }
+
+  .pointer.click-flash {
+    border-top-color: #ffffff;
+    filter: drop-shadow(0 0 25px #ffffff) drop-shadow(0 0 40px #00ff88);
+    transform: translateX(-50%) scale(1.3);
+    transition: all 0.08s ease-out;
+  }
+
+  .guide-line {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 200px;
+    background: linear-gradient(to bottom, rgba(240,165,0,0.6), transparent);
+    z-index: 90;
+    pointer-events: none;
+    transition: background 0.5s ease;
+  }
+
+  .guide-line.active {
+    background: linear-gradient(to bottom, rgba(0,255,136,0.6), transparent);
+  }
+
+  .guide-line.click-flash {
+    width: 4px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(0,255,136,0.8), transparent);
+    transition: all 0.08s ease-out;
+  }
+
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.5s ease, border-color 0.5s ease;
+  }
+
+  .ring-outer {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, transparent 42%, #1a1a2e 42%, #1a1a2e 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.2);
+  }
+  .ring-2 {
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, transparent 42%, #15152a 42%, #15152a 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.15);
+  }
+  .ring-3 {
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, transparent 42%, #101025 42%, #101025 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.1);
+  }
+  .ring-inner {
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, transparent 42%, #0a0a20 42%, #0a0a20 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.1);
+  }
+
+  .ring.running {
+    border-color: rgba(0, 255, 136, 0.4);
+  }
+  .ring-outer.running { box-shadow: 0 0 25px rgba(0, 255, 136, 0.1), inset 0 0 20px rgba(0, 255, 136, 0.05); }
+  .ring-2.running { box-shadow: 0 0 20px rgba(0, 255, 136, 0.08); }
+  .ring-3.running { box-shadow: 0 0 15px rgba(0, 255, 136, 0.06); }
+  .ring-inner.running { box-shadow: 0 0 10px rgba(0, 255, 136, 0.05); }
+
+  .ring.click-flash {
+    border-color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 136, 0.3) !important;
+    transition: all 0.08s ease-out;
+  }
+
+  /* Tick marks - garis-garis kecil seperti jam */
+  .tick {
+    position: absolute;
+    width: 1px;
+    height: 6px;
+    background: rgba(100, 100, 150, 0.3);
+    transform-origin: center;
+    transition: background 0.5s;
+  }
+
+  .ring.running .tick {
+    background: rgba(0, 255, 136, 0.2);
+  }
+
+  .tick.major {
+    width: 2px;
+    height: 10px;
+    background: rgba(100, 100, 150, 0.5);
+  }
+
+  .ring.running .tick.major {
+    background: rgba(0, 255, 136, 0.4);
+  }
+
+  .ring-char {
+    position: absolute;
+    font-size: 13px;
+    font-weight: bold;
+    color: #444466;
+    user-select: none;
+    transition: color 0.5s;
+    letter-spacing: 1px;
+  }
+
+  .ring.running .ring-char {
+    color: rgba(0, 255, 136, 0.7);
+    text-shadow: 0 0 4px rgba(0, 255, 136, 0.3);
+  }
+
+  .ring-char.highlight {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px #00ff88, 0 0 15px rgba(0, 255, 136, 0.6) !important;
+    font-size: 15px;
+  }
+
+  @keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes spin-ccw { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+  .ring.running.spin-1 { animation: spin-cw 10s linear infinite; }
+  .ring.running.spin-2 { animation: spin-ccw 14s linear infinite; }
+  .ring.running.spin-3 { animation: spin-cw 8s linear infinite; }
+  .ring.running.spin-4 { animation: spin-ccw 5s linear infinite; }
+
+  .center {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #1a1a2e, #050510);
+    border: 2px solid rgba(100, 100, 150, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5);
+    transition: border-color 0.5s, box-shadow 0.5s;
+    gap: 4px;
+  }
+
+  .center.running {
+    border-color: rgba(0, 255, 136, 0.5);
+    box-shadow: 0 0 40px rgba(0, 255, 136, 0.2), inset 0 0 20px rgba(0, 255, 136, 0.1);
+  }
+
+  .power-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid rgba(100, 100, 150, 0.4);
+    background: radial-gradient(circle at 30% 30%, #2a2a40, #0a0a1a);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.05);
+    position: relative;
+  }
+
+  .power-btn:hover {
+    transform: scale(1.05);
+    border-color: rgba(100, 100, 150, 0.7);
+  }
+
+  .power-btn:active {
+    transform: scale(0.95);
+  }
+
+  .power-btn.running {
+    border-color: rgba(0, 255, 136, 0.6);
+    background: radial-gradient(circle at 30% 30%, #0a3a2a, #051510);
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.4), inset 0 1px 2px rgba(0, 255, 136, 0.2);
+  }
+
+  .power-btn.running:hover {
+    border-color: rgba(255, 80, 80, 0.6);
+  }
+
+  .power-icon {
+    width: 32px;
+    height: 32px;
+    stroke: #555577;
+    stroke-width: 2.5;
+    fill: none;
+    transition: stroke 0.4s, filter 0.4s;
+  }
+
+  .power-btn.running .power-icon {
+    stroke: #00ff88;
+    filter: drop-shadow(0 0 6px #00ff88);
+  }
+
+  .status-text {
+    font-size: 9px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: #555577;
+    transition: color 0.5s, text-shadow 0.5s;
+    text-transform: uppercase;
+  }
+
+  .status-text.running {
+    color: #00ff88;
+    text-shadow: 0 0 8px #00ff88;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .controls {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    z-index: 10;
+  }
+
+  .info-text {
+    color: #555577;
+    font-size: 13px;
+    text-align: center;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+
+  .access-key-display {
+    color: #00ff88;
+    font-size: 14px;
+    letter-spacing: 3px;
+    padding: 8px 16px;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    background: rgba(0, 255, 136, 0.05);
+    border-radius: 6px;
+    min-height: 20px;
+    transition: all 0.3s;
+    opacity: 0;
+  }
+
+  .access-key-display.visible {
+    opacity: 1;
+  }
+
+  .click-info-panel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    border: 1px solid rgba(100, 100, 150, 0.2);
+    background: rgba(20, 20, 40, 0.5);
+    border-radius: 6px;
+    font-size: 12px;
+    color: #555577;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .click-info-panel.visible {
+    opacity: 1;
+  }
+
+  .click-countdown {
+    color: #00ff88;
+    font-weight: bold;
+    min-width: 32px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .mute-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(100, 100, 150, 0.3);
+    background: rgba(100, 100, 150, 0.1);
+    color: #8888aa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+
+  .mute-btn:hover {
+    background: rgba(100, 100, 150, 0.2);
+    color: #aaaacc;
+  }
+
+  .mute-btn.muted {
+    color: #ff5555;
+    border-color: rgba(255, 85, 85, 0.3);
+  }
+</style>
+</head>
+<body>
+
+<div class="vault-container" id="vault">
+  <div class="pointer" id="pointer"></div>
+  <div class="guide-line" id="guideLine"></div>
+
+  <div class="ring ring-outer spin-1" id="ring-0"></div>
+  <div class="ring ring-2 spin-2" id="ring-1"></div>
+  <div class="ring ring-3 spin-3" id="ring-2"></div>
+  <div class="ring ring-inner spin-4" id="ring-3"></div>
+
+  <div class="center" id="centerDisplay">
+    <button class="power-btn" id="powerBtn" onclick="toggleValidator()" aria-label="Toggle Validator">
+      <svg class="power-icon" viewBox="0 0 24 24">
+        <path d="M12 2 L12 12" stroke-linecap="round"/>
+        <path d="M18.36 6.64 A9 9 0 1 1 5.64 6.64" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="status-text" id="statusText">OFFLINE</div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="access-key-display" id="accessKeyDisplay">ACCESS KEY: ---- ---- ---- ----</div>
+  
+  <div class="click-info-panel" id="clickInfoPanel">
+    <button class="mute-btn" id="muteBtn" onclick="toggleMute()" title="Mute/Unmute">🔊</button>
+    <span>Next mechanical tick:</span>
+    <span class="click-countdown" id="clickCountdown">60s</span>
+  </div>
+
+  <p class="info-text">
+    Tekan tombol <strong>POWER</strong> di tengah mesin untuk mengaktifkan BossX Validator.<br>
+    Klik mekanis akan terdengar setiap <strong>60 detik</strong> saat validasi berlangsung.
+  </p>
+</div>
+
+<script>
+let isRunning = false;
+let keyInterval = null;
+let clickInterval = null;
+let countdownInterval = null;
+let nextClickTime = 0;
+let isMuted = false;
+let audioCtx = null;
+
+const CHARS = '0123456789ABCDEFGHIJKLMN'.split('');
+const CHARS_PER_RING = 24;
+const RING_OFFSETS = [0, 6, 12, 18];
+const CLICK_INTERVAL_MS = 60000;
+const TICKS_PER_RING = 60;
+
+// ==================== AUDIO ENGINE ====================
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playMechanicalClick() {
+  if (isMuted || !audioCtx) return;
+  
+  const now = audioCtx.currentTime;
+  
+  const clickOsc = audioCtx.createOscillator();
+  const clickGain = audioCtx.createGain();
+  const clickFilter = audioCtx.createBiquadFilter();
+  
+  clickOsc.type = 'triangle';
+  clickOsc.frequency.setValueAtTime(1800, now);
+  clickOsc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+  
+  clickFilter.type = 'bandpass';
+  clickFilter.frequency.value = 1200;
+  clickFilter.Q.value = 2;
+  
+  clickGain.gain.setValueAtTime(0, now);
+  clickGain.gain.linearRampToValueAtTime(0.4, now + 0.002);
+  clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+  
+  clickOsc.connect(clickFilter);
+  clickFilter.connect(clickGain);
+  clickGain.connect(audioCtx.destination);
+  
+  clickOsc.start(now);
+  clickOsc.stop(now + 0.1);
+  
+  const thudOsc = audioCtx.createOscillator();
+  const thudGain = audioCtx.createGain();
+  
+  thudOsc.type = 'sine';
+  thudOsc.frequency.setValueAtTime(180, now);
+  thudOsc.frequency.exponentialRampToValueAtTime(60, now + 0.1);
+  
+  thudGain.gain.setValueAtTime(0, now);
+  thudGain.gain.linearRampToValueAtTime(0.3, now + 0.003);
+  thudGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+  
+  thudOsc.connect(thudGain);
+  thudGain.connect(audioCtx.destination);
+  
+  thudOsc.start(now);
+  thudOsc.stop(now + 0.2);
+  
+  const bufferSize = audioCtx.sampleRate * 0.05;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    noiseData[i] = (Math.random() * 2 - 1) * 0.5;
+  }
+  
+  const noiseSource = audioCtx.createBufferSource();
+  const noiseGain = audioCtx.createGain();
+  const noiseFilter = audioCtx.createBiquadFilter();
+  
+  noiseSource.buffer = noiseBuffer;
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.value = 2000;
+  
+  noiseGain.gain.setValueAtTime(0.15, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+  
+  noiseSource.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(audioCtx.destination);
+  
+  noiseSource.start(now);
+}
+
+function triggerClickFlash() {
+  const pointer = document.getElementById('pointer');
+  const guideLine = document.getElementById('guideLine');
+  const rings = document.querySelectorAll('.ring');
+  
+  pointer.classList.add('click-flash');
+  guideLine.classList.add('click-flash');
+  rings.forEach(ring => ring.classList.add('click-flash'));
+  
+  setTimeout(() => {
+    pointer.classList.remove('click-flash');
+    guideLine.classList.remove('click-flash');
+    rings.forEach(ring => ring.classList.remove('click-flash'));
+  }, 150);
+  
+  if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
+}
+
+function scheduleNextClick() {
+  nextClickTime = Date.now() + CLICK_INTERVAL_MS;
+  updateCountdown();
+  
+  if (countdownInterval) clearInterval(countdownInterval);
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+function updateCountdown() {
+  const remaining = Math.max(0, Math.ceil((nextClickTime - Date.now()) / 1000));
+  document.getElementById('clickCountdown').textContent = `${remaining}s`;
+}
+
+function startClickLoop() {
+  scheduleNextClick();
+  
+  if (clickInterval) clearInterval(clickInterval);
+  clickInterval = setInterval(() => {
+    if (!isRunning) return;
+    
+    playMechanicalClick();
+    triggerClickFlash();
+    
+    scheduleNextClick();
+  }, CLICK_INTERVAL_MS);
+}
+
+function stopClickLoop() {
+  if (clickInterval) {
+    clearInterval(clickInterval);
+    clickInterval = null;
+  }
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+  document.getElementById('clickCountdown').textContent = '60s';
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  const btn = document.getElementById('muteBtn');
+  if (isMuted) {
+    btn.textContent = '🔇';
+    btn.classList.add('muted');
+  } else {
+    btn.textContent = '🔊';
+    btn.classList.remove('muted');
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+}
+
+// ==================== RING INITIALIZATION ====================
+function initRings() {
+  const radii = [180, 142, 104, 66];
+  const tickRadii = [195, 155, 115, 75];
+  
+  for (let r = 0; r < 4; r++) {
+    const ring = document.getElementById(`ring-${r}`);
+    const radius = radii[r];
+    const tickRadius = tickRadii[r];
+    const offset = RING_OFFSETS[r];
+
+    // Tick marks (garis-garis kecil seperti jam) - DI DALAM RING
+    for (let i = 0; i < TICKS_PER_RING; i++) {
+      const angle = (i * 360 / TICKS_PER_RING) - 90;
+      const rad = (angle * Math.PI) / 180;
+      const x = Math.cos(rad) * tickRadius;
+      const y = Math.sin(rad) * tickRadius;
+
+      const tick = document.createElement('div');
+      tick.className = `tick ${i % 5 === 0 ? 'major' : ''}`;
+      tick.style.left = `calc(50% + ${x}px - 0.5px)`;
+      tick.style.top = `calc(50% + ${y}px - 3px)`;
+      tick.style.transform = `rotate(${angle + 90}deg)`;
+      ring.appendChild(tick);
+    }
+
+    // Karakter alphanumeric
+    for (let i = 0; i < CHARS_PER_RING; i++) {
+      const charIndex = (i + offset) % CHARS.length;
+      const angle = (i * 360 / CHARS_PER_RING) - 90;
+      const rad = (angle * Math.PI) / 180;
+      const x = Math.cos(rad) * radius;
+      const y = Math.sin(rad) * radius;
+
+      const charEl = document.createElement('div');
+      charEl.className = 'ring-char';
+      charEl.textContent = CHARS[charIndex];
+      charEl.dataset.index = i;
+      charEl.style.left = `calc(50% + ${x}px - 6px)`;
+      charEl.style.top = `calc(50% + ${y}px - 8px)`;
+      ring.appendChild(charEl);
+    }
+
+    // ⚠️ NOTCH DI LUAR RING SUDAH DIHAPUS SESUAI PERMINTAAN
+  }
+}
+
+function updateHighlights() {
+  if (!isRunning) return;
+  
+  const rings = document.querySelectorAll('.ring');
+  let accessKey = '';
+  
+  rings.forEach((ring, rIdx) => {
+    ring.querySelectorAll('.ring-char.highlight').forEach(el => el.classList.remove('highlight'));
+    
+    const computedStyle = window.getComputedStyle(ring);
+    const matrix = computedStyle.transform;
+    
+    let currentAngle = 0;
+    if (matrix && matrix !== 'none') {
+      const values = matrix.match(/matrix\(([^)]+)\)/);
+      if (values) {
+        const parts = values[1].split(',').map(Number);
+        currentAngle = Math.atan2(parts[1], parts[0]) * (180 / Math.PI);
+      }
+    }
+    
+    currentAngle = ((currentAngle % 360) + 360) % 360;
+    
+    const anglePerChar = 360 / CHARS_PER_RING;
+    const highlightIndex = Math.round((currentAngle + 90) / anglePerChar) % CHARS_PER_RING;
+    
+    const chars = ring.querySelectorAll('.ring-char');
+    if (chars[highlightIndex]) {
+      chars[highlightIndex].classList.add('highlight');
+      accessKey += chars[highlightIndex].textContent;
+    }
+    
+    if (rIdx < 3) accessKey += ' ';
+  });
+  
+  const display = document.getElementById('accessKeyDisplay');
+  display.textContent = `ACCESS KEY: ${accessKey}`;
+}
+
+function toggleValidator() {
+  initAudio();
+  
+  isRunning = !isRunning;
+  const btn = document.getElementById('powerBtn');
+  const statusText = document.getElementById('statusText');
+  const center = document.getElementById('centerDisplay');
+  const pointer = document.getElementById('pointer');
+  const guideLine = document.getElementById('guideLine');
+  const rings = document.querySelectorAll('.ring');
+  const keyDisplay = document.getElementById('accessKeyDisplay');
+  const clickPanel = document.getElementById('clickInfoPanel');
+
+  if (isRunning) {
+    btn.classList.add('running');
+    statusText.textContent = "RUNNING";
+    statusText.classList.add('running');
+    center.classList.add('running');
+    pointer.classList.add('active');
+    guideLine.classList.add('active');
+    keyDisplay.classList.add('visible');
+    clickPanel.classList.add('visible');
+
+    rings.forEach(ring => ring.classList.add('running'));
+
+    keyInterval = setInterval(updateHighlights, 100);
+    startClickLoop();
+    
+    setTimeout(() => {
+      playMechanicalClick();
+      triggerClickFlash();
+    }, 300);
+
+    if (navigator.vibrate) navigator.vibrate(100);
+
+  } else {
+    btn.classList.remove('running');
+    statusText.textContent = "OFFLINE";
+    statusText.classList.remove('running');
+    center.classList.remove('running');
+    pointer.classList.remove('active');
+    guideLine.classList.remove('active');
+    keyDisplay.classList.remove('visible');
+    clickPanel.classList.remove('visible');
+
+    rings.forEach(ring => {
+      ring.classList.remove('running');
+      ring.style.transform = 'rotate(0deg)';
+      ring.querySelectorAll('.ring-char.highlight').forEach(el => el.classList.remove('highlight'));
+    });
+
+    if (keyInterval) {
+      clearInterval(keyInterval);
+      keyInterval = null;
+    }
+    
+    stopClickLoop();
+  }
+}
+
+initRings();
+</script>
+
+</body>
+</html>
