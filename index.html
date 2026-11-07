@@ -8,7 +8,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #050510;
+    background: #0a0a1a;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,156 +21,16 @@
 
   .vault-container {
     position: relative;
-    width: 460px;
-    height: 460px;
+    width: 420px;
+    height: 420px;
     display: flex;
     align-items: center;
     justify-content: center;
     transform-origin: center center;
-    background: 
-      radial-gradient(circle at 30% 20%, rgba(80, 80, 120, 0.08), transparent 50%),
-      radial-gradient(circle at center, #12122a 0%, #08081a 100%);
-    border: 1px solid rgba(100, 100, 150, 0.15);
-    border-radius: 18px;
-    box-shadow: 
-      inset 0 0 80px rgba(0,0,0,0.6),
-      inset 0 1px 0 rgba(255,255,255,0.03),
-      0 20px 60px rgba(0,0,0,0.8),
-      0 0 0 1px rgba(0,0,0,0.5);
   }
 
-  @media (max-width: 480px) { .vault-container { transform: scale(0.85); } }
-  @media (max-width: 400px) { .vault-container { transform: scale(0.75); } }
-
-  .screw {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #5a5a7a 0%, #2a2a40 50%, #15152a 100%);
-    box-shadow: 
-      inset 0 1px 2px rgba(255,255,255,0.15),
-      inset 0 -2px 3px rgba(0,0,0,0.6),
-      0 2px 4px rgba(0,0,0,0.8),
-      0 0 0 1px rgba(0,0,0,0.4);
-    z-index: 200;
-  }
-
-  .screw::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 22%;
-    right: 22%;
-    height: 2px;
-    background: linear-gradient(to bottom, #050510, #1a1a2e);
-    transform: translateY(-50%);
-    border-radius: 1px;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.05);
-  }
-
-  .screw-tl { top: 18px; left: 18px; }
-  .screw-tr { top: 18px; right: 18px; }
-  .screw-bl { bottom: 18px; left: 18px; }
-  .screw-br { bottom: 18px; right: 18px; }
-
-  .screw-tl::before { transform: translateY(-50%) rotate(25deg); }
-  .screw-tr::before { transform: translateY(-50%) rotate(-35deg); }
-  .screw-bl::before { transform: translateY(-50%) rotate(70deg); }
-  .screw-br::before { transform: translateY(-50%) rotate(-15deg); }
-
-  .engraving {
-    position: absolute;
-    bottom: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Courier New', monospace;
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: #2a2a40;
-    text-shadow: 1px 1px 0 rgba(255,255,255,0.04), -1px -1px 0 rgba(0,0,0,0.8);
-    z-index: 200;
-    user-select: none;
-    font-weight: bold;
-  }
-
-  .engraving-sub {
-    position: absolute;
-    bottom: 42px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Courier New', monospace;
-    font-size: 8px;
-    letter-spacing: 2px;
-    color: #222235;
-    text-shadow: 1px 1px 0 rgba(255,255,255,0.03), -1px -1px 0 rgba(0,0,0,0.8);
-    z-index: 200;
-    user-select: none;
-  }
-
-  .led {
-    position: absolute;
-    top: 45px;
-    right: 50px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ff8888, #aa2222 50%, #550000 100%);
-    box-shadow: 
-      inset 0 0 2px rgba(255,255,255,0.4),
-      inset 0 -1px 2px rgba(0,0,0,0.5),
-      0 0 6px rgba(255, 50, 50, 0.5),
-      0 0 0 1px rgba(0,0,0,0.6);
-    z-index: 200;
-    animation: led-blink-irregular 4s infinite;
-    transition: all 0.4s ease;
-  }
-
-  .led::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 2px;
-    width: 3px;
-    height: 2px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-  }
-
-  .led.running {
-    background: radial-gradient(circle at 35% 30%, #aaffbb, #22cc55 50%, #005522 100%);
-    box-shadow: 
-      inset 0 0 2px rgba(255,255,255,0.5),
-      inset 0 -1px 2px rgba(0,0,0,0.4),
-      0 0 10px rgba(0, 255, 136, 0.8),
-      0 0 20px rgba(0, 255, 136, 0.4),
-      0 0 0 1px rgba(0,0,0,0.6);
-    animation: led-pulse-soft 2.5s ease-in-out infinite;
-  }
-
-  @keyframes led-blink-irregular {
-    0%, 42%, 48%, 100% { opacity: 1; filter: brightness(1); }
-    45% { opacity: 0.25; filter: brightness(0.5); }
-    65% { opacity: 0.9; filter: brightness(1.1); }
-    68% { opacity: 0.4; filter: brightness(0.7); }
-    72% { opacity: 1; filter: brightness(1); }
-  }
-
-  @keyframes led-pulse-soft {
-    0%, 100% { opacity: 1; filter: brightness(1); }
-    50% { opacity: 0.75; filter: brightness(1.2); }
-  }
-
-  .gear-tooth {
-    position: absolute;
-    width: 3px;
-    height: 8px;
-    background: linear-gradient(to bottom, rgba(120, 120, 160, 0.5), rgba(60, 60, 90, 0.3));
-    border-radius: 1px;
-    pointer-events: none;
-    z-index: 5;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 0 2px rgba(0,0,0,0.5);
-  }
+  @media (max-width: 450px) { .vault-container { transform: scale(0.85); } }
+  @media (max-width: 360px) { .vault-container { transform: scale(0.75); } }
 
   .guide-line {
     position: absolute;
@@ -214,9 +74,8 @@
     background: radial-gradient(circle, transparent 42%, #15152a 42%, #15152a 48%, transparent 48%);
     border: 2px solid rgba(100, 100, 150, 0.15);
   }
-  /* ===== RING-3 DIPERBESAR: 240px → 260px ===== */
   .ring-3 {
-    width: 260px; height: 260px;
+    width: 240px; height: 240px;
     background: radial-gradient(circle, transparent 42%, #101025 42%, #101025 48%, transparent 48%);
     border: 2px solid rgba(100, 100, 150, 0.1);
   }
@@ -231,7 +90,9 @@
     border: 2px solid rgba(100, 100, 150, 0.1);
   }
 
-  .ring.running { border-color: rgba(0, 255, 136, 0.4); }
+  .ring.running {
+    border-color: rgba(0, 255, 136, 0.4);
+  }
   .ring-outer.running { box-shadow: 0 0 25px rgba(0, 255, 136, 0.1), inset 0 0 20px rgba(0, 255, 136, 0.05); }
   .ring-2.running { box-shadow: 0 0 20px rgba(0, 255, 136, 0.08); }
   .ring-3.running { box-shadow: 0 0 15px rgba(0, 255, 136, 0.06); }
@@ -253,7 +114,9 @@
     transition: background 0.5s;
   }
 
-  .ring.running .tick { background: rgba(0, 255, 136, 0.2); }
+  .ring.running .tick {
+    background: rgba(0, 255, 136, 0.2);
+  }
 
   .tick.major {
     width: 2px;
@@ -261,7 +124,9 @@
     background: rgba(100, 100, 150, 0.5);
   }
 
-  .ring.running .tick.major { background: rgba(0, 255, 136, 0.4); }
+  .ring.running .tick.major {
+    background: rgba(0, 255, 136, 0.4);
+  }
 
   .ring-char {
     position: absolute;
@@ -287,27 +152,24 @@
   @keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes spin-ccw { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
-  .ring.running.spin-1 { animation: spin-cw 25s linear infinite; }
-  .ring.running.spin-2 { animation: spin-ccw 35s linear infinite; }
-  .ring.running.spin-3 { animation: spin-cw 20s linear infinite; }
-  .ring.running.spin-4 { animation: spin-ccw 30s linear infinite; }
-  .ring.running.spin-5 { animation: spin-cw 18s linear infinite; }
+  .ring.running.spin-1 { animation: spin-cw 10s linear infinite; }
+  .ring.running.spin-2 { animation: spin-ccw 14s linear infinite; }
+  .ring.running.spin-3 { animation: spin-cw 8s linear infinite; }
+  .ring.running.spin-4 { animation: spin-ccw 12s linear infinite; }
+  .ring.running.spin-5 { animation: spin-cw 6s linear infinite; }
 
   .center {
     position: absolute;
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #2a2a45, #0a0a1a 70%, #050510);
+    background: radial-gradient(circle, #1a1a2e, #050510);
     border: 2px solid rgba(100, 100, 150, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 50;
-    box-shadow: 
-      0 0 30px rgba(0,0,0,0.8), 
-      inset 0 2px 4px rgba(255,255,255,0.05),
-      inset 0 -4px 8px rgba(0,0,0,0.6);
+    box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5);
     transition: border-color 0.5s, box-shadow 0.5s;
   }
 
@@ -327,10 +189,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.4s ease;
-    box-shadow: 
-      0 4px 15px rgba(0,0,0,0.6), 
-      inset 0 1px 2px rgba(255,255,255,0.05),
-      inset 0 -2px 4px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.05);
     position: relative;
   }
 
@@ -339,7 +198,9 @@
     border-color: rgba(100, 100, 150, 0.7);
   }
 
-  .power-btn:active { transform: scale(0.95); }
+  .power-btn:active {
+    transform: scale(0.95);
+  }
 
   .power-btn.running {
     border-color: rgba(0, 255, 136, 0.6);
@@ -347,7 +208,9 @@
     box-shadow: 0 0 25px rgba(0, 255, 136, 0.4), inset 0 1px 2px rgba(0, 255, 136, 0.2);
   }
 
-  .power-btn.running:hover { border-color: rgba(255, 80, 80, 0.6); }
+  .power-btn.running:hover {
+    border-color: rgba(255, 80, 80, 0.6);
+  }
 
   .power-icon {
     width: 32px;
@@ -367,16 +230,6 @@
 <body>
 
 <div class="vault-container" id="vault">
-  <div class="screw screw-tl"></div>
-  <div class="screw screw-tr"></div>
-  <div class="screw screw-bl"></div>
-  <div class="screw screw-br"></div>
-
-  <div class="led" id="ledIndicator"></div>
-
-  <div class="engraving-sub">SERIAL NO.</div>
-  <div class="engraving">BOSSX-VAL-01</div>
-
   <div class="guide-line" id="guideLine"></div>
 
   <div class="ring ring-outer spin-1" id="ring-0"></div>
@@ -401,35 +254,13 @@ let keyInterval = null;
 let clickInterval = null;
 let audioCtx = null;
 
-let humOsc1 = null, humOsc2 = null, humGain = null;
-let noiseSource = null, noiseGain = null, noiseFilter = null;
-
 const CHARS = '0123456789ABCDEFGHIJKLMN'.split('');
 const CHARS_PER_RING = 24;
 const RING_OFFSETS = [0, 6, 12, 18, 3];
 const CLICK_INTERVAL_MS = 60000;
 const TICKS_PER_RING = 60;
-const GEAR_TEETH_COUNT = 60;
 
-function initGearTeeth() {
-  const vault = document.getElementById('vault');
-  const radius = 208;
-  
-  for (let i = 0; i < GEAR_TEETH_COUNT; i++) {
-    const angle = (i * 360 / GEAR_TEETH_COUNT) - 90;
-    const rad = (angle * Math.PI) / 180;
-    const x = Math.cos(rad) * radius;
-    const y = Math.sin(rad) * radius;
-
-    const tooth = document.createElement('div');
-    tooth.className = 'gear-tooth';
-    tooth.style.left = `calc(50% + ${x}px - 1.5px)`;
-    tooth.style.top = `calc(50% + ${y}px - 4px)`;
-    tooth.style.transform = `rotate(${angle + 90}deg)`;
-    vault.insertBefore(tooth, vault.firstChild);
-  }
-}
-
+// ==================== AUDIO ENGINE ====================
 function initAudio() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -437,89 +268,6 @@ function initAudio() {
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
-}
-
-function startHum() {
-  if (!audioCtx) return;
-  const now = audioCtx.currentTime;
-
-  humGain = audioCtx.createGain();
-  humGain.gain.setValueAtTime(0, now);
-  humGain.gain.linearRampToValueAtTime(0.06, now + 1.2);
-  humGain.connect(audioCtx.destination);
-
-  humOsc1 = audioCtx.createOscillator();
-  humOsc1.type = 'sine';
-  humOsc1.frequency.setValueAtTime(55, now);
-  const lfo = audioCtx.createOscillator();
-  const lfoGain = audioCtx.createGain();
-  lfo.type = 'sine';
-  lfo.frequency.value = 0.3;
-  lfoGain.gain.value = 1.5;
-  lfo.connect(lfoGain);
-  lfoGain.connect(humOsc1.frequency);
-  lfo.start(now);
-
-  humOsc1.connect(humGain);
-  humOsc1.start(now);
-
-  humOsc2 = audioCtx.createOscillator();
-  const humGain2 = audioCtx.createGain();
-  humOsc2.type = 'triangle';
-  humOsc2.frequency.setValueAtTime(110, now);
-  humGain2.gain.setValueAtTime(0, now);
-  humGain2.gain.linearRampToValueAtTime(0.025, now + 1.2);
-  humOsc2.connect(humGain2);
-  humGain2.connect(humGain);
-  humOsc2.start(now);
-
-  const bufferSize = audioCtx.sampleRate * 2;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const noiseData = noiseBuffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    noiseData[i] = (Math.random() * 2 - 1);
-  }
-
-  noiseSource = audioCtx.createBufferSource();
-  noiseSource.buffer = noiseBuffer;
-  noiseSource.loop = true;
-
-  noiseFilter = audioCtx.createBiquadFilter();
-  noiseFilter.type = 'bandpass';
-  noiseFilter.frequency.value = 180;
-  noiseFilter.Q.value = 1.5;
-
-  noiseGain = audioCtx.createGain();
-  noiseGain.gain.setValueAtTime(0, now);
-  noiseGain.gain.linearRampToValueAtTime(0.04, now + 1.5);
-
-  noiseSource.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(humGain);
-  noiseSource.start(now);
-}
-
-function stopHum() {
-  if (!audioCtx) return;
-  const now = audioCtx.currentTime;
-  const fadeTime = 0.8;
-
-  if (humGain) {
-    humGain.gain.cancelScheduledValues(now);
-    humGain.gain.setValueAtTime(humGain.gain.value, now);
-    humGain.gain.linearRampToValueAtTime(0, now + fadeTime);
-  }
-
-  setTimeout(() => {
-    try {
-      if (humOsc1) { humOsc1.stop(); humOsc1 = null; }
-      if (humOsc2) { humOsc2.stop(); humOsc2 = null; }
-      if (noiseSource) { noiseSource.stop(); noiseSource = null; }
-      if (humGain) { humGain.disconnect(); humGain = null; }
-      if (noiseGain) { noiseGain.disconnect(); noiseGain = null; }
-      if (noiseFilter) { noiseFilter.disconnect(); noiseFilter = null; }
-    } catch (e) {}
-  }, fadeTime * 1000 + 100);
 }
 
 function playMechanicalClick() {
@@ -574,22 +322,22 @@ function playMechanicalClick() {
     noiseData[i] = (Math.random() * 2 - 1) * 0.5;
   }
   
-  const noiseSourceClick = audioCtx.createBufferSource();
-  const noiseGainClick = audioCtx.createGain();
-  const noiseFilterClick = audioCtx.createBiquadFilter();
+  const noiseSource = audioCtx.createBufferSource();
+  const noiseGain = audioCtx.createGain();
+  const noiseFilter = audioCtx.createBiquadFilter();
   
-  noiseSourceClick.buffer = noiseBuffer;
-  noiseFilterClick.type = 'highpass';
-  noiseFilterClick.frequency.value = 2000;
+  noiseSource.buffer = noiseBuffer;
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.value = 2000;
   
-  noiseGainClick.gain.setValueAtTime(0.15, now);
-  noiseGainClick.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+  noiseGain.gain.setValueAtTime(0.15, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
   
-  noiseSourceClick.connect(noiseFilterClick);
-  noiseFilterClick.connect(noiseGainClick);
-  noiseGainClick.connect(audioCtx.destination);
+  noiseSource.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(audioCtx.destination);
   
-  noiseSourceClick.start(now);
+  noiseSource.start(now);
 }
 
 function triggerClickFlash() {
@@ -623,10 +371,10 @@ function stopClickLoop() {
   }
 }
 
+// ==================== RING INITIALIZATION ====================
 function initRings() {
-  // ===== RING-3 DIPERBESAR: radius 104 → 112, tickRadius 115 → 122 =====
-  const radii = [180, 142, 112, 85, 66];
-  const tickRadii = [195, 155, 122, 95, 75];
+  const radii = [180, 142, 104, 85, 66];
+  const tickRadii = [195, 155, 115, 95, 75];
   
   for (let r = 0; r < 5; r++) {
     const ring = document.getElementById(`ring-${r}`);
@@ -709,17 +457,13 @@ function toggleValidator() {
   const btn = document.getElementById('powerBtn');
   const center = document.getElementById('centerDisplay');
   const guideLine = document.getElementById('guideLine');
-  const led = document.getElementById('ledIndicator');
   const rings = document.querySelectorAll('.ring');
 
   if (isRunning) {
     btn.classList.add('running');
     center.classList.add('running');
     guideLine.classList.add('active');
-    led.classList.add('running');
     rings.forEach(ring => ring.classList.add('running'));
-
-    startHum();
 
     keyInterval = setInterval(updateHighlights, 100);
     startClickLoop();
@@ -735,14 +479,11 @@ function toggleValidator() {
     btn.classList.remove('running');
     center.classList.remove('running');
     guideLine.classList.remove('active');
-    led.classList.remove('running');
     rings.forEach(ring => {
       ring.classList.remove('running');
       ring.style.transform = ''; 
       ring.querySelectorAll('.ring-char.highlight').forEach(el => el.classList.remove('highlight'));
     });
-
-    stopHum();
 
     if (keyInterval) {
       clearInterval(keyInterval);
@@ -753,7 +494,6 @@ function toggleValidator() {
   }
 }
 
-initGearTeeth();
 initRings();
 </script>
 
