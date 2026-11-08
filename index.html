@@ -21,16 +21,19 @@
 
   .vault-container {
     position: relative;
-    width: 420px;
-    height: 420px;
+    width: 900px; /* Diperbesar dari 800px untuk menampung cincin baru */
+    height: 900px;
     display: flex;
     align-items: center;
     justify-content: center;
     transform-origin: center center;
   }
 
-  @media (max-width: 450px) { .vault-container { transform: scale(0.85); } }
-  @media (max-width: 360px) { .vault-container { transform: scale(0.75); } }
+  /* Media queries disesuaikan dengan base size 900px */
+  @media (max-width: 950px) { .vault-container { transform: scale(0.85); } }
+  @media (max-width: 800px) { .vault-container { transform: scale(0.70); } }
+  @media (max-width: 680px) { .vault-container { transform: scale(0.55); } }
+  @media (max-width: 550px) { .vault-container { transform: scale(0.45); } }
 
   .guide-line {
     position: absolute;
@@ -38,7 +41,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 2px;
-    height: 210px;
+    height: 450px; /* Diperpanjang sesuai radius baru */
     background: linear-gradient(to bottom, rgba(240,165,0,0.6), transparent);
     z-index: 90;
     pointer-events: none;
@@ -64,44 +67,80 @@
     transition: transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.5s ease, border-color 0.5s ease;
   }
 
-  .ring-outer {
-    width: 400px; height: 400px;
+  /* 11 Cincin (dari terluar ke terdalam) */
+  .ring-10 { /* CINCIN TERLUAR BARU */
+    width: 840px; height: 840px;
+    background: radial-gradient(circle, transparent 42%, #262650 42%, #262650 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.38);
+  }
+  .ring-9 {
+    width: 760px; height: 760px;
+    background: radial-gradient(circle, transparent 42%, #24244a 42%, #24244a 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.35);
+  }
+  .ring-8 {
+    width: 680px; height: 680px;
+    background: radial-gradient(circle, transparent 42%, #222240 42%, #222240 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.32);
+  }
+  .ring-7 {
+    width: 620px; height: 620px;
+    background: radial-gradient(circle, transparent 42%, #1e1e38 42%, #1e1e38 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.28);
+  }
+  .ring-6 {
+    width: 560px; height: 560px;
+    background: radial-gradient(circle, transparent 42%, #1c1c34 42%, #1c1c34 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.25);
+  }
+  .ring-5 {
+    width: 500px; height: 500px;
     background: radial-gradient(circle, transparent 42%, #1a1a2e 42%, #1a1a2e 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.22);
+  }
+  .ring-4 {
+    width: 440px; height: 440px;
+    background: radial-gradient(circle, transparent 42%, #181828 42%, #181828 48%, transparent 48%);
     border: 2px solid rgba(100, 100, 150, 0.2);
+  }
+  .ring-3 {
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, transparent 42%, #15152a 42%, #15152a 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.18);
   }
   .ring-2 {
     width: 320px; height: 320px;
-    background: radial-gradient(circle, transparent 42%, #15152a 42%, #15152a 48%, transparent 48%);
+    background: radial-gradient(circle, transparent 42%, #121226 42%, #121226 48%, transparent 48%);
     border: 2px solid rgba(100, 100, 150, 0.15);
   }
-  .ring-3 {
-    width: 260px; height: 260px; /* Diperbesar dari 240px menjadi 260px */
-    background: radial-gradient(circle, transparent 42%, #101025 42%, #101025 48%, transparent 48%);
-    border: 2px solid rgba(100, 100, 150, 0.1);
+  .ring-1 {
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, transparent 42%, #0f0f22 42%, #0f0f22 48%, transparent 48%);
+    border: 2px solid rgba(100, 100, 150, 0.12);
   }
-  .ring-4 {
+  .ring-0 {
     width: 200px; height: 200px;
-    background: radial-gradient(circle, transparent 42%, #0d0d22 42%, #0d0d22 48%, transparent 48%);
-    border: 2px solid rgba(100, 100, 150, 0.1);
-  }
-  .ring-inner {
-    width: 160px; height: 160px;
     background: radial-gradient(circle, transparent 42%, #0a0a20 42%, #0a0a20 48%, transparent 48%);
     border: 2px solid rgba(100, 100, 150, 0.1);
   }
 
-  .ring.running {
-    border-color: rgba(0, 255, 136, 0.4);
-  }
-  .ring-outer.running { box-shadow: 0 0 25px rgba(0, 255, 136, 0.1), inset 0 0 20px rgba(0, 255, 136, 0.05); }
-  .ring-2.running { box-shadow: 0 0 20px rgba(0, 255, 136, 0.08); }
-  .ring-3.running { box-shadow: 0 0 15px rgba(0, 255, 136, 0.06); }
-  .ring-4.running { box-shadow: 0 0 12px rgba(0, 255, 136, 0.05); }
-  .ring-inner.running { box-shadow: 0 0 10px rgba(0, 255, 136, 0.05); }
+  /* Efek Running untuk semua ring */
+  .ring.running { border-color: rgba(0, 255, 136, 0.4); }
+  .ring-10.running { box-shadow: 0 0 55px rgba(0, 255, 136, 0.2), inset 0 0 40px rgba(0, 255, 136, 0.1); }
+  .ring-9.running { box-shadow: 0 0 45px rgba(0, 255, 136, 0.18), inset 0 0 30px rgba(0, 255, 136, 0.08); }
+  .ring-8.running { box-shadow: 0 0 40px rgba(0, 255, 136, 0.16), inset 0 0 28px rgba(0, 255, 136, 0.08); }
+  .ring-7.running { box-shadow: 0 0 35px rgba(0, 255, 136, 0.14), inset 0 0 25px rgba(0, 255, 136, 0.07); }
+  .ring-6.running { box-shadow: 0 0 30px rgba(0, 255, 136, 0.12), inset 0 0 22px rgba(0, 255, 136, 0.06); }
+  .ring-5.running { box-shadow: 0 0 26px rgba(0, 255, 136, 0.1), inset 0 0 20px rgba(0, 255, 136, 0.06); }
+  .ring-4.running { box-shadow: 0 0 22px rgba(0, 255, 136, 0.09); }
+  .ring-3.running { box-shadow: 0 0 18px rgba(0, 255, 136, 0.08); }
+  .ring-2.running { box-shadow: 0 0 15px rgba(0, 255, 136, 0.07); }
+  .ring-1.running { box-shadow: 0 0 12px rgba(0, 255, 136, 0.06); }
+  .ring-0.running { box-shadow: 0 0 10px rgba(0, 255, 136, 0.05); }
 
   .ring.click-flash {
     border-color: rgba(255, 255, 255, 0.9) !important;
-    box-shadow: 0 0 40px rgba(255, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 136, 0.3) !important;
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.5), inset 0 0 35px rgba(0, 255, 136, 0.3) !important;
     transition: all 0.08s ease-out;
   }
 
@@ -114,19 +153,13 @@
     transition: background 0.5s;
   }
 
-  .ring.running .tick {
-    background: rgba(0, 255, 136, 0.2);
-  }
-
+  .ring.running .tick { background: rgba(0, 255, 136, 0.2); }
   .tick.major {
     width: 2px;
     height: 10px;
     background: rgba(100, 100, 150, 0.5);
   }
-
-  .ring.running .tick.major {
-    background: rgba(0, 255, 136, 0.4);
-  }
+  .ring.running .tick.major { background: rgba(0, 255, 136, 0.4); }
 
   .ring-char {
     position: absolute;
@@ -152,17 +185,23 @@
   @keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes spin-ccw { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
-  /* Kecepatan dikurangi 50% (Durasi diperpanjang 2x lipat) */
-  .ring.running.spin-1 { animation: spin-cw 20s linear infinite; }
-  .ring.running.spin-2 { animation: spin-ccw 28s linear infinite; }
-  .ring.running.spin-3 { animation: spin-cw 16s linear infinite; }
-  .ring.running.spin-4 { animation: spin-ccw 24s linear infinite; }
-  .ring.running.spin-5 { animation: spin-cw 12s linear infinite; }
+  /* 11 animasi spin - semakin ke dalam semakin cepat */
+  .ring.running.spin-11 { animation: spin-ccw 45s linear infinite; } /* Baru: Terluar, paling lambat */
+  .ring.running.spin-1 { animation: spin-cw 40s linear infinite; }
+  .ring.running.spin-2 { animation: spin-ccw 36s linear infinite; }
+  .ring.running.spin-3 { animation: spin-cw 32s linear infinite; }
+  .ring.running.spin-4 { animation: spin-ccw 28s linear infinite; }
+  .ring.running.spin-5 { animation: spin-cw 24s linear infinite; }
+  .ring.running.spin-6 { animation: spin-ccw 20s linear infinite; }
+  .ring.running.spin-7 { animation: spin-cw 16s linear infinite; }
+  .ring.running.spin-8 { animation: spin-ccw 14s linear infinite; }
+  .ring.running.spin-9 { animation: spin-cw 12s linear infinite; }
+  .ring.running.spin-10 { animation: spin-ccw 10s linear infinite; }
 
   .center {
     position: absolute;
-    width: 120px;
-    height: 120px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     background: radial-gradient(circle, #1a1a2e, #050510);
     border: 2px solid rgba(100, 100, 150, 0.3);
@@ -180,8 +219,8 @@
   }
 
   .power-btn {
-    width: 70px;
-    height: 70px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     border: 2px solid rgba(100, 100, 150, 0.4);
     background: radial-gradient(circle at 30% 30%, #2a2a40, #0a0a1a);
@@ -214,8 +253,8 @@
   }
 
   .power-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     stroke: #555577;
     stroke-width: 2.5;
     fill: none;
@@ -233,11 +272,18 @@
 <div class="vault-container" id="vault">
   <div class="guide-line" id="guideLine"></div>
 
-  <div class="ring ring-outer spin-1" id="ring-0"></div>
-  <div class="ring ring-2 spin-2" id="ring-1"></div>
-  <div class="ring ring-3 spin-3" id="ring-2"></div>
-  <div class="ring ring-4 spin-4" id="ring-3"></div>
-  <div class="ring ring-inner spin-5" id="ring-4"></div>
+  <!-- 11 Cincin (dari terluar ke terdalam) -->
+  <div class="ring ring-10 spin-11" id="ring-10"></div> <!-- CINCIN TERLUAR BARU -->
+  <div class="ring ring-9 spin-1" id="ring-0"></div>
+  <div class="ring ring-8 spin-2" id="ring-1"></div>
+  <div class="ring ring-7 spin-3" id="ring-2"></div>
+  <div class="ring ring-6 spin-4" id="ring-3"></div>
+  <div class="ring ring-5 spin-5" id="ring-4"></div>
+  <div class="ring ring-4 spin-6" id="ring-5"></div>
+  <div class="ring ring-3 spin-7" id="ring-6"></div>
+  <div class="ring ring-2 spin-8" id="ring-7"></div>
+  <div class="ring ring-1 spin-9" id="ring-8"></div>
+  <div class="ring ring-0 spin-10" id="ring-9"></div>
 
   <div class="center" id="centerDisplay">
     <button class="power-btn" id="powerBtn" onclick="toggleValidator()" aria-label="Toggle Validator">
@@ -256,19 +302,28 @@ let audioCtx = null;
 let animationFrameId = null;
 let startTime = 0;
 
-const CHARS = '0123456789ABCDEFGHIJKLMN'.split('');
+// Karakter campuran huruf besar & kecil (34 karakter total)
+const CHARS = '0123456789aBcDeFgHiJkLmNoPqRsTuVwXyZ'.split('');
 const CHARS_PER_RING = 24;
-const RING_OFFSETS = [0, 6, 12, 18, 3];
+// Ditambahkan offset 30 di index 0 untuk cincin terluar baru
+const RING_OFFSETS = [30, 0, 3, 6, 9, 12, 15, 18, 21, 24, 27];
 const CLICK_INTERVAL_MS = 60000;
 const TICKS_PER_RING = 60;
 
-// Kecepatan rotasi berdasarkan durasi CSS baru (20s, 28s, 16s, 24s, 12s)
+// Kecepatan rotasi (semakin ke dalam semakin cepat)
+// Ditambahkan -360 / 45000 di index 0 (terluar, paling lambat, CCW)
 const RING_SPEEDS = [
-  360 / 20000,   // Ring 0 (CW)
-  -360 / 28000,  // Ring 1 (CCW)
-  360 / 16000,   // Ring 2 (CW)
-  -360 / 24000,  // Ring 3 (CCW)
-  360 / 12000    // Ring 4 (CW)
+  -360 / 45000,  // Ring 10 (CCW, 840px - paling luar, BARU)
+  360 / 40000,   // Ring 9 (CW, 760px)
+  -360 / 36000,  // Ring 8 (CCW, 680px)
+  360 / 32000,   // Ring 7 (CW, 620px)
+  -360 / 28000,  // Ring 6 (CCW, 560px)
+  360 / 24000,   // Ring 5 (CW, 500px)
+  -360 / 20000,  // Ring 4 (CCW, 440px)
+  360 / 16000,   // Ring 3 (CW, 380px)
+  -360 / 14000,  // Ring 2 (CCW, 320px)
+  360 / 12000,   // Ring 1 (CW, 260px)
+  -360 / 10000   // Ring 0 (CCW, 200px - paling dalam)
 ];
 
 // ==================== AUDIO ENGINE ====================
@@ -383,12 +438,23 @@ function stopClickLoop() {
 
 // ==================== RING INITIALIZATION ====================
 function initRings() {
-  // radii dan tickRadii disesuaikan untuk menyeimbangkan ukuran .ring-3 yang baru (260px)
-  const radii = [180, 142, 112, 85, 66];
-  const tickRadii = [195, 155, 125, 95, 75];
+  // 11 radii (dari terluar ke terdalam) - Ditambahkan nilai baru di index 0
+  const radii = [395, 355, 320, 290, 260, 230, 200, 170, 140, 112, 85];
+  const tickRadii = [410, 370, 335, 305, 275, 245, 215, 185, 155, 125, 95];
   
-  for (let r = 0; r < 5; r++) {
-    const ring = document.getElementById(`ring-${r}`);
+  // Loop diubah dari r < 10 menjadi r < 11
+  for (let r = 0; r < 11; r++) {
+    const ring = document.getElementById(`ring-${r === 10 ? 10 : (9 - r)}`); 
+    // Penyesuaian mapping ID: 
+    // r=0 -> id="ring-10" (terluar baru)
+    // r=1 -> id="ring-0" (ring-9 class)
+    // ...
+    // r=10 -> id="ring-9" (ring-0 class, terdalam)
+    
+    // Cara mapping yang lebih aman dan eksplisit berdasarkan ID HTML:
+    const targetId = r === 0 ? 'ring-10' : `ring-${r - 1}`;
+    const actualRing = document.getElementById(targetId);
+    
     const radius = radii[r];
     const tickRadius = tickRadii[r];
     const offset = RING_OFFSETS[r];
@@ -404,7 +470,7 @@ function initRings() {
       tick.style.left = `calc(50% + ${x}px - 0.5px)`;
       tick.style.top = `calc(50% + ${y}px - 3px)`;
       tick.style.transform = `rotate(${angle + 90}deg)`;
-      ring.appendChild(tick);
+      actualRing.appendChild(tick);
     }
 
     for (let i = 0; i < CHARS_PER_RING; i++) {
@@ -420,17 +486,17 @@ function initRings() {
       charEl.dataset.index = i;
       charEl.style.left = `calc(50% + ${x}px - 6px)`;
       charEl.style.top = `calc(50% + ${y}px - 8px)`;
-      ring.appendChild(charEl);
+      actualRing.appendChild(charEl);
     }
   }
 }
 
-// Menggunakan requestAnimationFrame agar performa ringan dan mulus
 function updateHighlights(timestamp) {
   if (!isRunning) return;
   if (!startTime) startTime = timestamp;
   const elapsed = timestamp - startTime;
 
+  // Mengambil semua 11 ring
   const rings = document.querySelectorAll('.ring');
   
   rings.forEach((ring, r) => {
@@ -469,7 +535,7 @@ function toggleValidator() {
     guideLine.classList.add('active');
     rings.forEach(ring => ring.classList.add('running'));
 
-    startTime = 0; // Reset waktu agar sinkron
+    startTime = 0;
     animationFrameId = requestAnimationFrame(updateHighlights);
     startClickLoop();
     
